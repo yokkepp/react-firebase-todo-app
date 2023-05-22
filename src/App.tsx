@@ -32,9 +32,12 @@ function App() {
 		id: "",
 		done: false,
 	});
-
 	const [todos, setTodos] = useState<Todo[]>([]);
 
+	/**フォーム内の値の変更を監視する関数です。
+	 *
+	 * @param e イベントです。
+	 */
 	const handleChange = (e: any) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
@@ -81,6 +84,15 @@ function App() {
 		setIsSelectedTodo(todo);
 	};
 
+	const handleDelete = (id: string) => {
+		const newTodos = todos.filter((todo) => todo.id !== id);
+		setTodos(newTodos);
+
+		console.log("id", id);
+		console.log("deleted", newTodos);
+		console.log;
+	};
+
 	//登録フォームを開いた時に、タイトルにフォーカスする。
 	useEffect(() => {
 		if (inputEl.current) {
@@ -108,6 +120,7 @@ function App() {
 					todos={todos}
 					handleSelectTodo={handleSelectTodo}
 					isSelectedTodo={isSelectedTodo}
+					handleDelete={handleDelete}
 				/>
 				<ActiveTodo
 					isSelectedTodo={isSelectedTodo}

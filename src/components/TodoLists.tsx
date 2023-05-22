@@ -1,10 +1,14 @@
+import { FaTrashAlt, FaCheckCircle, FaCircle } from "react-icons/fa";
+
 type Props = {
 	todos: any;
 	handleSelectTodo: any;
 	isSelectedTodo: any;
+	handleDelete: any;
 };
 
 function TodoLists(props: Props) {
+	const { todos, handleSelectTodo, isSelectedTodo, handleDelete } = props;
 	return (
 		<aside className='w-3/12 bg-slate-700 text-white'>
 			<div className='flex flex-col pt-5'>
@@ -13,18 +17,25 @@ function TodoLists(props: Props) {
 					検索結果：0 件
 				</p>
 				<ul className='flex flex-col gap-2 pl-3 pt-3'>
-					{props.todos.map((todo) => {
+					{todos.map((todo) => {
 						return (
 							<li
-								onClick={() => props.handleSelectTodo(todo)}
+								onClick={() => handleSelectTodo(todo)}
 								key={todo.id}
 								className={
-									props.isSelectedTodo.id === todo.id
-										? "flex items-center rounded-l-md bg-slate-300 p-5 font-semibold text-slate-700"
-										: "mr-2 flex items-center rounded-md bg-slate-800 p-5 font-semibold text-slate-400"
+									isSelectedTodo.id === todo.id
+										? "flex                                         items-center                                         justify-between rounded-l-md bg-slate-300 p-5 font-semibold text-slate-700"
+										: "mr-2 flex items-center justify-between rounded-md bg-slate-800 p-5 font-semibold text-slate-400"
 								}>
-								<input type='checkbox' name='done' />
-								<h2 className='ml-2 text-lg'>{todo.title}</h2>
+								<div className='flex'>
+									<input type='checkbox' name='done' />
+									<h2 className='ml-2 text-lg'>{todo.title}</h2>
+								</div>
+								<div
+									onClick={() => handleDelete(todo.id)}
+									className={isSelectedTodo.id === todo.id ? "pr-2" : ""}>
+									<FaTrashAlt />
+								</div>
 							</li>
 						);
 					})}
