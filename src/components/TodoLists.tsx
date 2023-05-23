@@ -31,7 +31,7 @@ function TodoLists(props: Props) {
 								}>
 								<div className='flex'>
 									<input type='checkbox' name='done' />
-									<h2 className='ml-2 text-lg'>{todo.title}</h2>
+									<h2 className='mx-2 text-lg'>{todo.title}</h2>
 								</div>
 								<div
 									onClick={() => handleDelete(todo.id)}

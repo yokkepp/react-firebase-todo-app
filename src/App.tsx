@@ -3,7 +3,14 @@ import TodoLists from "./components/TodoLists";
 import ActiveTodo from "./components/ActiveTodo";
 import TodoModal from "./components/TodoModal";
 import SearchCondition from "./components/SearchCondition";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import {
+	doc,
+	setDoc,
+	collection,
+	getDocs,
+	addDoc,
+	deleteDoc,
+} from "firebase/firestore";
 import db from "./firebase";
 
 type Todo = {
@@ -51,10 +58,13 @@ function App() {
 	 * @function
 	 * @param e フォームのイベントです
 	 */
-	const handleRegisterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const targetId = crypto.randomUUID();
-		setTodos([...todos, { ...formData, id: targetId }]);
+
+		//firebaseにドキュメントを追加する
+		const docRef = await addDoc(collection(db, "todos"), formData);
+
+		setTodos([...todos, { ...formData, id: docRef.id }]);
 
 		//フォームの初期化
 		setFormData({
@@ -94,6 +104,9 @@ function App() {
 	const handleDelete = (id: string) => {
 		const newTodos = todos.filter((todo) => todo.id !== id);
 		setTodos(newTodos);
+
+		//firebaseのtodo削除
+		deleteDoc(doc(db, "todos", id));
 	};
 
 	/**todoを編集する編集ボタンをクリックすると発火する関数です。
@@ -152,33 +165,35 @@ function App() {
 		}
 	}, [isModalOpen]);
 
-	//firebaseからデータを取得する
+	//firebaseからデータを一括取得する
 	useEffect(() => {
-		// const querySnapshot = getDocs(collection(db, "cities"));
-		// querySnapshot.forEach((doc) => {
-		// 	// doc.data() is never undefined for query doc snapshots
-		// 	console.log(doc.id, " => ", doc.data());
-		// });
-
 		const todoData = collection(db, "todos");
 		getDocs(todoData).then((result) => {
-			const todosArray = [];
+			const todosArray: Todo[] = [];
 			result.forEach((todoData) =>
 				todosArray.push({
 					id: todoData.id,
 					title: todoData.data().title,
 					description: todoData.data().description,
+					progress: todoData.data().progress,
+					timeLimit: todoData.data().timeLimit,
+					done: todoData.data().done,
 				})
 			);
 			setTodos(todosArray);
 		});
-		// getDocs(todoData).then((result) =>
-		// 	result.forEach((doc) => {
-		// 		// doc.data() is never undefined for query doc snapshots
-		// 		console.log(doc.data());
-		// 	})
-		// );
 	}, []);
+
+	//テスト用コード
+	useEffect(() => {
+		console.log("todos", todos);
+	}, [todos]);
+
+	//テスト用コード
+	useEffect(() => {
+		console.log("isSelectedTodo:", isSelectedTodo);
+	}, [isSelectedTodo]);
+
 	return (
 		<>
 			<TodoModal

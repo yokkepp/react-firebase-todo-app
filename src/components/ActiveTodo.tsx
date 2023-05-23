@@ -26,7 +26,7 @@ export default function ActiveTodo(props: Props) {
 				)}
 			</div>
 			<div className='flex justify-end gap-10'>
-				<p>期限：{isSelectedTodo.timeLimit}</p>
+				{/* <p>期限：{isSelectedTodo.timeLimit}</p> */}
 			</div>
 			<p>{isSelectedTodo.description}</p>
 			<button
