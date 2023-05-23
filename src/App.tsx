@@ -10,6 +10,7 @@ import {
 	getDocs,
 	addDoc,
 	deleteDoc,
+	updateDoc,
 } from "firebase/firestore";
 import db from "./firebase";
 
@@ -127,17 +128,18 @@ function App() {
 	 */
 	const handleUpdateSubmit = (e) => {
 		e.preventDefault();
-
-		console.log(e);
-		console.log(e);
 		const newTodos = todos.map((todo) => {
 			if (isSelectedTodo.id === todo.id) {
+				updateDoc(doc(db, "todos", todo.id), formData);
 				return formData;
 			} else {
 				return todo;
 			}
 		});
 		setTodos(newTodos);
+
+		//firebaseの更新
+
 		//フォームの初期化
 		setFormData({
 			title: "",

@@ -17,7 +17,7 @@ export default function ActiveTodo(props: Props) {
 				</h1>
 				{isSelectedTodo.id ? (
 					<div
-						className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-700 text-slate-200 hover:bg-slate-500'
+						className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-700 text-slate-200 hover:bg-slate-500'
 						onClick={() => handleUpdateButton(isSelectedTodo)}>
 						<FaPen />
 					</div>
