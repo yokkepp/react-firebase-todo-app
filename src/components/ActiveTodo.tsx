@@ -26,10 +26,8 @@ export default function ActiveTodo(props: Props) {
 				)}
 			</div>
 			<div className='flex justify-end gap-10'>
-				<p>作成日：2023年10月1日</p>
 				<p>期限：{isSelectedTodo.timeLimit}</p>
 			</div>
-			<p>id:{isSelectedTodo.id}</p>
 			<p>{isSelectedTodo.description}</p>
 			<button
 				className=' absolute bottom-10 right-10 h-16 w-16 rounded-full bg-green-600 text-4xl text-white shadow-md hover:bg-green-500'

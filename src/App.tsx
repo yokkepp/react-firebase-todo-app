@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import TodoLists from "./components/TodoLists";
 import ActiveTodo from "./components/ActiveTodo";
-import AddTodoModal from "./components/AddTodoModal";
+import TodoModal from "./components/TodoModal";
 import SearchCondition from "./components/SearchCondition";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import db from "./firebase";
 
 type Todo = {
 	title: string;
 	description: string;
 	timeLimit: string;
-	progress: number;
+	progress: number | null;
 	id: string;
 	done: boolean;
 };
@@ -20,7 +22,7 @@ function App() {
 		title: "",
 		description: "",
 		timeLimit: "",
-		progress: 0,
+		progress: null,
 		id: "",
 		done: false,
 	});
@@ -28,11 +30,12 @@ function App() {
 		title: "",
 		description: "",
 		timeLimit: "",
-		progress: 0,
+		progress: null,
 		id: "",
 		done: false,
 	});
 	const [todos, setTodos] = useState<Todo[]>([]);
+	const [currentTodos, setCurrentTodos] = useState<Todo[]>([]);
 	const [isEditing, setIsEditing] = useState(false);
 
 	/**フォーム内の値の変更を監視する関数です。
@@ -58,7 +61,7 @@ function App() {
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: 0,
+			progress: null,
 			done: false,
 			id: "",
 		});
@@ -127,7 +130,7 @@ function App() {
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: 0,
+			progress: null,
 			done: false,
 			id: "",
 		});
@@ -135,7 +138,7 @@ function App() {
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: 0,
+			progress: null,
 			id: "",
 			done: false,
 		});
@@ -149,9 +152,36 @@ function App() {
 		}
 	}, [isModalOpen]);
 
+	//firebaseからデータを取得する
+	useEffect(() => {
+		// const querySnapshot = getDocs(collection(db, "cities"));
+		// querySnapshot.forEach((doc) => {
+		// 	// doc.data() is never undefined for query doc snapshots
+		// 	console.log(doc.id, " => ", doc.data());
+		// });
+
+		const todoData = collection(db, "todos");
+		getDocs(todoData).then((result) => {
+			const todosArray = [];
+			result.forEach((todoData) =>
+				todosArray.push({
+					id: todoData.id,
+					title: todoData.data().title,
+					description: todoData.data().description,
+				})
+			);
+			setTodos(todosArray);
+		});
+		// getDocs(todoData).then((result) =>
+		// 	result.forEach((doc) => {
+		// 		// doc.data() is never undefined for query doc snapshots
+		// 		console.log(doc.data());
+		// 	})
+		// );
+	}, []);
 	return (
 		<>
-			<AddTodoModal
+			<TodoModal
 				isModalOpen={isModalOpen}
 				handleRegisterSubmit={handleRegisterSubmit}
 				handleChange={handleChange}

@@ -9,7 +9,7 @@ type Props = {
 	isSelectedTodo: any;
 };
 
-export default function AddTodoModal(props: Props) {
+export default function TodoModal(props: Props) {
 	const {
 		isModalOpen,
 		handleRegisterSubmit,
@@ -30,9 +30,6 @@ export default function AddTodoModal(props: Props) {
 			<form
 				className=' container relative flex h-3/4 w-3/4 flex-col gap-5 rounded-2xl bg-slate-200 p-12 shadow-lg'
 				onSubmit={isEditing ? handleUpdateSubmit : handleRegisterSubmit}>
-				<p>isSelectedTodo.id:{isSelectedTodo.id}</p>
-				<p>isSelectedTodo.title:{isSelectedTodo.title}</p>
-				<p>isEditing:{isEditing ? "true" : "false"}</p>
 				<input
 					type='text'
 					name='title'
@@ -61,7 +58,7 @@ export default function AddTodoModal(props: Props) {
 					達成率：
 					<input
 						type='number'
-						name='achievement'
+						name='progress'
 						value={formData.progress}
 						onChange={handleChange}
 					/>{" "}

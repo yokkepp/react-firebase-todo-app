@@ -10,12 +10,14 @@ type Props = {
 function TodoLists(props: Props) {
 	const { todos, handleSelectTodo, isSelectedTodo, handleDelete } = props;
 	return (
-		<aside className='w-3/12 bg-slate-700 text-white'>
+		<aside className='w-3/12 overflow-auto bg-slate-700 text-white'>
 			<div className='flex flex-col pt-5'>
-				<h1 className='text-center text-3xl font-bold'>Todo List</h1>
-				<p className='border-b border-solid border-white pb-5 text-center text-sm'>
-					検索結果：0 件
-				</p>
+				<div>
+					<h1 className='text-center text-3xl font-bold'>Todo List</h1>
+					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
+						検索結果：0 件
+					</p>
+				</div>
 				<ul className='flex flex-col gap-2 pl-3 pt-3'>
 					{todos.map((todo) => {
 						return (
