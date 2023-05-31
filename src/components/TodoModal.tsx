@@ -1,3 +1,6 @@
+import { IoMdTimer } from "react-icons/io";
+import { GiProgression } from "react-icons/gi";
+
 type Props = {
 	isModalOpen: boolean;
 	handleRegisterSubmit: any;
@@ -39,14 +42,35 @@ export default function TodoModal(props: Props) {
 					className='p-5 text-3xl font-semibold'
 					placeholder='件名を入力してください'></input>
 
-				<div className='flex flex-row justify-end gap-5'>
-					<p>作成日：2023年10月1日</p>
-					<input
-						name='timeLimit'
-						value={formData.timeLimit}
-						type='date'
-						onChange={handleChange}
-					/>
+				<div className='flex flex-row justify-between'>
+					<div className='flex'>
+						<div className='flex h-10 w-10 items-center justify-center pr-2'>
+							<GiProgression size='70%' color='#64748b' />
+						</div>
+						<div className='flex bg-white p-2'>
+							<input
+								type='number'
+								name='progress'
+								value={formData.progress}
+								onChange={handleChange}
+								max='100'
+								min='0'
+							/>
+							%
+						</div>
+					</div>
+					<div className='flex'>
+						<div className='flex h-10 w-10 items-center justify-center'>
+							<IoMdTimer size='70%' color='#64748b' />
+						</div>
+						<input
+							name='timeLimit'
+							value={formData.timeLimit}
+							type='datetime-local'
+							onChange={handleChange}
+							className='p-2'
+						/>
+					</div>
 				</div>
 				<textarea
 					className='h-1/2 resize-none p-3'
@@ -54,22 +78,13 @@ export default function TodoModal(props: Props) {
 					value={formData.description}
 					placeholder='詳細を入力してください'
 					onChange={handleChange}></textarea>
-				<label htmlFor='achievement'>
-					達成率：
-					<input
-						type='number'
-						name='progress'
-						value={formData.progress}
-						onChange={handleChange}
-					/>{" "}
-					%
-				</label>
+
 				{isEditing ? (
-					<button className='absolute bottom-10 right-10 w-auto rounded bg-slate-500 px-12 py-4 text-white shadow-lg hover:bg-slate-400'>
+					<button className='w-auto rounded bg-slate-500 px-12 py-4 text-white shadow-lg hover:bg-slate-400'>
 						更新
 					</button>
 				) : (
-					<button className='absolute bottom-10 right-10 w-auto rounded bg-green-500 px-12 py-4 text-white shadow-lg hover:bg-green-400'>
+					<button className='w-auto rounded bg-green-500 px-12 py-4 text-white shadow-lg hover:bg-green-400'>
 						登録
 					</button>
 				)}

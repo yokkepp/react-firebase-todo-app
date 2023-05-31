@@ -4,18 +4,18 @@ type Props = {
 	todos: any;
 	handleSelectTodo: any;
 	isSelectedTodo: any;
-	handleDelete: any;
+	handleDeleteModal: any;
 };
 
 function TodoLists(props: Props) {
-	const { todos, handleSelectTodo, isSelectedTodo, handleDelete } = props;
+	const { todos, handleSelectTodo, isSelectedTodo, handleDeleteModal } = props;
 	return (
 		<aside className='w-3/12 overflow-auto bg-slate-700 text-white'>
 			<div className='flex flex-col pt-5'>
 				<div>
 					<h1 className='text-center text-3xl font-bold'>Todo List</h1>
 					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
-						検索結果：0 件
+						検索結果：{todos.length} 件
 					</p>
 				</div>
 				<ul className='flex flex-col gap-2 pl-3 pt-3'>
@@ -34,8 +34,12 @@ function TodoLists(props: Props) {
 									<h2 className='mx-2 text-lg'>{todo.title}</h2>
 								</div>
 								<div
-									onClick={() => handleDelete(todo.id)}
-									className={isSelectedTodo.id === todo.id ? "pr-2" : ""}>
+									onClick={handleDeleteModal}
+									className={
+										isSelectedTodo.id === todo.id
+											? "cursor-pointer pr-2"
+											: "cursor-pointer"
+									}>
 									<FaTrashAlt />
 								</div>
 							</li>

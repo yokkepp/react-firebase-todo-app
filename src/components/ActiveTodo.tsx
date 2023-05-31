@@ -25,10 +25,8 @@ export default function ActiveTodo(props: Props) {
 					<></>
 				)}
 			</div>
-			<div className='flex justify-end gap-10'>
-				{/* <p>期限：{isSelectedTodo.timeLimit}</p> */}
-			</div>
-			<p>{isSelectedTodo.description}</p>
+			<div className='flex justify-end gap-10'></div>
+			<p className={"whitespace-pre-wrap"}>{isSelectedTodo.description}</p>
 			<button
 				className=' absolute bottom-10 right-10 h-16 w-16 rounded-full bg-green-600 text-4xl text-white shadow-md hover:bg-green-500'
 				onClick={handleModalToggle}>

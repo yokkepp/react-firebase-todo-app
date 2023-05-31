@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import TodoLists from "./components/TodoLists";
 import ActiveTodo from "./components/ActiveTodo";
 import TodoModal from "./components/TodoModal";
+import DeleteConfirmation from "./components/DeleteConfirmation";
 import SearchCondition from "./components/SearchCondition";
 import {
 	doc,
@@ -18,6 +19,7 @@ type Todo = {
 	title: string;
 	description: string;
 	timeLimit: string;
+	// createdAt: string;
 	progress: number | null;
 	id: string;
 	done: boolean;
@@ -45,6 +47,8 @@ function App() {
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [currentTodos, setCurrentTodos] = useState<Todo[]>([]);
 	const [isEditing, setIsEditing] = useState(false);
+	const [isDeleteAccept, setIsAccept] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
 	/**フォーム内の値の変更を監視する関数です。
 	 *@function
@@ -102,12 +106,28 @@ function App() {
 	 * @function
 	 * @param id 削除するtodoのidです。
 	 */
-	const handleDelete = (id: string) => {
-		const newTodos = todos.filter((todo) => todo.id !== id);
+	const handleDeleteModal = () => {
+		setIsDeleteModalOpen(!isDeleteModalOpen);
+	};
+
+	const doDelete = () => {
+		const newTodos = todos.filter((todo) => isSelectedTodo.id !== todo.id);
+
 		setTodos(newTodos);
+		setIsDeleteModalOpen(false);
 
 		//firebaseのtodo削除
-		deleteDoc(doc(db, "todos", id));
+		deleteDoc(doc(db, "todos", isSelectedTodo.id));
+
+		//isSelectedTodoの初期化
+		setIsSelectedTodo({
+			title: "",
+			description: "",
+			timeLimit: "",
+			progress: null,
+			id: "",
+			done: false,
+		});
 	};
 
 	/**todoを編集する編集ボタンをクリックすると発火する関数です。
@@ -149,14 +169,7 @@ function App() {
 			done: false,
 			id: "",
 		});
-		setIsSelectedTodo({
-			title: "",
-			description: "",
-			timeLimit: "",
-			progress: null,
-			id: "",
-			done: false,
-		});
+		setIsSelectedTodo({ ...formData });
 		setIsEditing(false);
 		handleModalToggle();
 	};
@@ -191,11 +204,6 @@ function App() {
 		console.log("todos", todos);
 	}, [todos]);
 
-	//テスト用コード
-	useEffect(() => {
-		console.log("isSelectedTodo:", isSelectedTodo);
-	}, [isSelectedTodo]);
-
 	return (
 		<>
 			<TodoModal
@@ -208,12 +216,16 @@ function App() {
 				handleUpdateSubmit={handleUpdateSubmit}
 				isSelectedTodo={isSelectedTodo}
 			/>
+			<DeleteConfirmation
+				isDeleteModalOpen={isDeleteModalOpen}
+				doDelete={() => doDelete(isSelectedTodo.id)}
+			/>
 			<div className='flex h-screen w-full bg-slate-200'>
 				<TodoLists
 					todos={todos}
 					handleSelectTodo={handleSelectTodo}
 					isSelectedTodo={isSelectedTodo}
-					handleDelete={handleDelete}
+					handleDeleteModal={handleDeleteModal}
 				/>
 				<ActiveTodo
 					isSelectedTodo={isSelectedTodo}
