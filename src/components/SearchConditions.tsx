@@ -1,7 +1,8 @@
-export default function SearchCondition() {
+export default function SearchCondition(props: any) {
+	const { handleChangeSearchConditions, handleSearchConditionsSubmit } = props;
 	return (
 		<aside className='w-3/12 bg-slate-700 p-3 text-slate-600'>
-			<form action=''>
+			<form onSubmit={handleSearchConditionsSubmit}>
 				<h3 className='p-5 text-center text-white'>検索条件</h3>
 				<div>
 					<div className='my-3 rounded bg-slate-200 p-3'>
@@ -9,7 +10,9 @@ export default function SearchCondition() {
 						<div className='flex flex-col'>
 							<input
 								className='m-3 mx-auto w-full rounded-md p-1 pl-3'
+								name='keyWord'
 								type='text'
+								onChange={handleChangeSearchConditions}
 							/>
 							<p className='ml-auto text-xs'>を含む</p>
 						</div>
@@ -19,12 +22,16 @@ export default function SearchCondition() {
 						<div className='flex flex-col'>
 							<input
 								className='m-3 mx-auto w-full rounded-md p-1 pl-3'
+								name='createdAtStart'
 								type='date'
+								onChange={handleChangeSearchConditions}
 							/>
 							<p className='ml-auto text-xs'>から</p>
 							<input
 								className='m-3 mx-auto w-full rounded-md p-1 pl-3'
+								name='createdAtEnd'
 								type='date'
+								onChange={handleChangeSearchConditions}
 							/>
 							<p className='ml-auto text-xs'>まで</p>
 						</div>
@@ -34,12 +41,16 @@ export default function SearchCondition() {
 						<div className='flex flex-col'>
 							<input
 								className='mx-auto my-3 w-full rounded-md p-1 pl-3'
+								name='timeLimitStart'
 								type='date'
+								onChange={handleChangeSearchConditions}
 							/>
 							<p className='ml-auto text-xs'>から</p>
 							<input
 								className='m-3 mx-auto w-full rounded-md p-1 pl-3'
+								name='timeLimitEnd'
 								type='date'
+								onChange={handleChangeSearchConditions}
 							/>
 							<p className='ml-auto text-xs'>まで</p>
 						</div>

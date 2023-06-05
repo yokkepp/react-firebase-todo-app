@@ -1,4 +1,4 @@
-import { IoMdTimer } from "react-icons/io";
+import { IoMdTimer, IoIosCreate } from "react-icons/io";
 import { GiProgression } from "react-icons/gi";
 
 type Props = {
@@ -44,22 +44,6 @@ export default function TodoModal(props: Props) {
 
 				<div className='flex flex-row justify-between'>
 					<div className='flex'>
-						<div className='flex h-10 w-10 items-center justify-center pr-2'>
-							<GiProgression size='70%' color='#64748b' />
-						</div>
-						<div className='flex bg-white p-2'>
-							<input
-								type='number'
-								name='progress'
-								value={formData.progress}
-								onChange={handleChange}
-								max='100'
-								min='0'
-							/>
-							%
-						</div>
-					</div>
-					<div className='flex'>
 						<div className='flex h-10 w-10 items-center justify-center'>
 							<IoMdTimer size='70%' color='#64748b' />
 						</div>
@@ -69,6 +53,17 @@ export default function TodoModal(props: Props) {
 							type='datetime-local'
 							onChange={handleChange}
 							className='p-2'
+						/>
+					</div>
+					<div className='flex'>
+						<div className='flex h-10 w-10 items-center justify-center'>
+							<IoIosCreate size='70%' color='#64748b' />
+						</div>
+						<input
+							type='datetime-local'
+							className='bg-slate-200 p-2'
+							value={formData.createdAt}
+							disabled
 						/>
 					</div>
 				</div>

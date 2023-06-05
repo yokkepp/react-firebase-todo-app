@@ -3,7 +3,7 @@ import TodoLists from "./components/TodoLists";
 import ActiveTodo from "./components/ActiveTodo";
 import TodoModal from "./components/TodoModal";
 import DeleteConfirmation from "./components/DeleteConfirmation";
-import SearchCondition from "./components/SearchCondition";
+import SearchConditions from "./components/SearchConditions";
 import {
 	doc,
 	setDoc,
@@ -14,15 +14,23 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import db from "./firebase";
+//TODO:エラーなくimportができるように修正する。
 
 type Todo = {
 	title: string;
 	description: string;
 	timeLimit: string;
-	// createdAt: string;
-	progress: number | null;
+	createdAt: string;
 	id: string;
 	done: boolean;
+};
+
+type Conditions = {
+	keyWord: string;
+	createdAtStart: string;
+	createdAtEnd: string;
+	timeLimitStart: string;
+	timeLimitEnd: string;
 };
 
 function App() {
@@ -32,7 +40,7 @@ function App() {
 		title: "",
 		description: "",
 		timeLimit: "",
-		progress: null,
+		createdAt: "",
 		id: "",
 		done: false,
 	});
@@ -40,7 +48,7 @@ function App() {
 		title: "",
 		description: "",
 		timeLimit: "",
-		progress: null,
+		createdAt: "",
 		id: "",
 		done: false,
 	});
@@ -49,6 +57,13 @@ function App() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [isDeleteAccept, setIsAccept] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [searchConditions, setSearchConditions] = useState<Conditions>({
+		keyWord: "",
+		createdAtStart: "",
+		createdAtEnd: "",
+		timeLimitStart: "",
+		timeLimitEnd: "",
+	});
 
 	/**フォーム内の値の変更を監視する関数です。
 	 *@function
@@ -59,6 +74,17 @@ function App() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
+	/**検索条件内の値の変更を監視する関数です。
+	 *@function
+	 * @param e イベントです。
+	 */
+	const handleChangeSearchConditions = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		const { name, value } = e.target;
+		setSearchConditions((prev) => ({ ...prev, [name]: value }));
+	};
+
 	/**登録ボタンをクリックした時に発火する関数です。
 	 * @function
 	 * @param e フォームのイベントです
@@ -66,21 +92,52 @@ function App() {
 	const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		//firebaseにドキュメントを追加する
-		const docRef = await addDoc(collection(db, "todos"), formData);
+		//作成日を生成する
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = ("0" + (now.getMonth() + 1)).slice(-2);
+		const date = ("0" + now.getDate()).slice(-2);
+		const hour = ("0" + now.getHours()).slice(-2);
+		const min = ("0" + now.getMinutes()).slice(-2);
 
-		setTodos([...todos, { ...formData, id: docRef.id }]);
+		const createdAt = `${year}-${month}-${date}T${hour}:${min}`;
+
+		//firebaseにドキュメントを追加する
+		const docRef = await addDoc(collection(db, "todos"), {
+			...formData,
+			createdAt: createdAt,
+		});
+
+		//ローカルのStateを変更する
+		setTodos([...todos, { ...formData, id: docRef.id, createdAt: createdAt }]);
 
 		//フォームの初期化
 		setFormData({
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: null,
+			createdAt: "",
 			done: false,
 			id: "",
 		});
 		handleModalToggle();
+	};
+
+	/**
+	 * 検索条件に入力した条件を、currentTodosにセットする関数です。
+	 * @param e
+	 * @function
+	 */
+	const handleSearchConditionsSubmit = async (
+		e: React.FormEvent<HTMLFormElement>
+	) => {
+		e.preventDefault();
+
+		const newTodos = todos.filter(
+			(todo) => todo.title.includes(searchConditions.keyWord) === true
+		);
+
+		setCurrentTodos(newTodos);
 	};
 
 	/**登録画面のモーダルウィンドウの表示状態を管理する関数です。
@@ -124,7 +181,7 @@ function App() {
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: null,
+			createdAt: "",
 			id: "",
 			done: false,
 		});
@@ -146,7 +203,7 @@ function App() {
 	 * @function
 	 * @param targetTodo 更新対象となるtodoです。
 	 */
-	const handleUpdateSubmit = (e) => {
+	const handleUpdateSubmit = (e: any) => {
 		e.preventDefault();
 		const newTodos = todos.map((todo) => {
 			if (isSelectedTodo.id === todo.id) {
@@ -165,7 +222,7 @@ function App() {
 			title: "",
 			description: "",
 			timeLimit: "",
-			progress: null,
+			createdAt: "",
 			done: false,
 			id: "",
 		});
@@ -190,8 +247,8 @@ function App() {
 					id: todoData.id,
 					title: todoData.data().title,
 					description: todoData.data().description,
-					progress: todoData.data().progress,
 					timeLimit: todoData.data().timeLimit,
+					createdAt: todoData.data().createdAt,
 					done: todoData.data().done,
 				})
 			);
@@ -218,7 +275,8 @@ function App() {
 			/>
 			<DeleteConfirmation
 				isDeleteModalOpen={isDeleteModalOpen}
-				doDelete={() => doDelete(isSelectedTodo.id)}
+				doDelete={doDelete}
+				handleDeleteModal={handleDeleteModal}
 			/>
 			<div className='flex h-screen w-full bg-slate-200'>
 				<TodoLists
@@ -226,13 +284,17 @@ function App() {
 					handleSelectTodo={handleSelectTodo}
 					isSelectedTodo={isSelectedTodo}
 					handleDeleteModal={handleDeleteModal}
+					currentTodos={currentTodos}
 				/>
 				<ActiveTodo
 					isSelectedTodo={isSelectedTodo}
 					handleModalToggle={handleModalToggle}
 					handleUpdateButton={handleUpdateButton}
 				/>
-				<SearchCondition />
+				<SearchConditions
+					handleChangeSearchConditions={handleChangeSearchConditions}
+					handleSearchConditionsSubmit={handleSearchConditionsSubmit}
+				/>
 			</div>
 		</>
 	);
