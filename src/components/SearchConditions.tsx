@@ -1,5 +1,10 @@
 export default function SearchCondition(props: any) {
-	const { handleChangeSearchConditions, handleSearchConditionsSubmit } = props;
+	const {
+		handleChangeSearchConditions,
+		handleSearchConditionsSubmit,
+		handleResetConditions,
+		searchConditions,
+	} = props;
 	return (
 		<aside className='w-3/12 bg-slate-700 p-3 text-slate-600'>
 			<form onSubmit={handleSearchConditionsSubmit}>
@@ -13,6 +18,7 @@ export default function SearchCondition(props: any) {
 								name='keyWord'
 								type='text'
 								onChange={handleChangeSearchConditions}
+								value={searchConditions.keyWord}
 							/>
 							<p className='ml-auto text-xs'>を含む</p>
 						</div>
@@ -25,6 +31,7 @@ export default function SearchCondition(props: any) {
 								name='createdAtStart'
 								type='date'
 								onChange={handleChangeSearchConditions}
+								value={searchConditions.createdAtStart}
 							/>
 							<p className='ml-auto text-xs'>から</p>
 							<input
@@ -32,6 +39,7 @@ export default function SearchCondition(props: any) {
 								name='createdAtEnd'
 								type='date'
 								onChange={handleChangeSearchConditions}
+								value={searchConditions.createdAtEnd}
 							/>
 							<p className='ml-auto text-xs'>まで</p>
 						</div>
@@ -44,6 +52,7 @@ export default function SearchCondition(props: any) {
 								name='timeLimitStart'
 								type='date'
 								onChange={handleChangeSearchConditions}
+								value={searchConditions.timeLimitStart}
 							/>
 							<p className='ml-auto text-xs'>から</p>
 							<input
@@ -51,12 +60,18 @@ export default function SearchCondition(props: any) {
 								name='timeLimitEnd'
 								type='date'
 								onChange={handleChangeSearchConditions}
+								value={searchConditions.timeLimitEnd}
 							/>
 							<p className='ml-auto text-xs'>まで</p>
 						</div>
 					</div>
 					<button className='w-full rounded bg-green-600 py-5 text-white shadow-md hover:bg-green-500'>
 						検索
+					</button>
+					<button
+						className='mt-3 w-full rounded bg-slate-600 py-5 text-white shadow-md hover:bg-slate-500'
+						onClick={handleResetConditions}>
+						検索条件リセット
 					</button>
 				</div>
 			</form>

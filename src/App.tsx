@@ -85,6 +85,16 @@ function App() {
 		setSearchConditions((prev) => ({ ...prev, [name]: value }));
 	};
 
+	const handleResetConditions = () => {
+		setSearchConditions({
+			keyWord: "",
+			createdAtStart: "",
+			createdAtEnd: "",
+			timeLimitStart: "",
+			timeLimitEnd: "",
+		});
+	};
+
 	/**登録ボタンをクリックした時に発火する関数です。
 	 * @function
 	 * @param e フォームのイベントです
@@ -134,7 +144,9 @@ function App() {
 		e.preventDefault();
 
 		const newTodos = todos.filter(
-			(todo) => todo.title.includes(searchConditions.keyWord) === true
+			(todo) =>
+				todo.title.includes(searchConditions.keyWord) === true ||
+				todo.description.includes(searchConditions.keyWord) === true
 		);
 
 		setCurrentTodos(newTodos);
@@ -256,11 +268,6 @@ function App() {
 		});
 	}, []);
 
-	//テスト用コード
-	useEffect(() => {
-		console.log("todos", todos);
-	}, [todos]);
-
 	return (
 		<>
 			<TodoModal
@@ -294,6 +301,8 @@ function App() {
 				<SearchConditions
 					handleChangeSearchConditions={handleChangeSearchConditions}
 					handleSearchConditionsSubmit={handleSearchConditionsSubmit}
+					handleResetConditions={handleResetConditions}
+					searchConditions={searchConditions}
 				/>
 			</div>
 		</>
