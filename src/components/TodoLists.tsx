@@ -6,6 +6,7 @@ type Props = {
 	handleSelectTodo: any;
 	isSelectedTodo: any;
 	handleDeleteModal: any;
+	currentTodos: any;
 };
 
 function TodoLists(props: Props) {
@@ -16,19 +17,31 @@ function TodoLists(props: Props) {
 		handleDeleteModal,
 		currentTodos,
 	} = props;
+
+	useEffect(() => {
+		console.log("currentTodos:", currentTodos);
+		console.log("currentTodos:", currentTodos.length);
+	}, [currentTodos]);
+
 	return (
-		<aside className='w-3/12  bg-slate-700'>
+		<aside className='w-3/12  min-w-[270px] bg-slate-700'>
 			<div className='flex flex-col text-white'>
-				<div className='fixed w-3/12 bg-slate-700 pt-5'>
+				<div className='fixed w-3/12 min-w-[270px] bg-slate-700 pt-5'>
 					<h1 className='text-center text-3xl font-bold'>Todo List</h1>
-					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
-						検索結果：{currentTodos.length} 件 / 全 {todos.length} 件
-					</p>
+					{currentTodos.length === 0 ? (
+						<p className='border-b border-solid border-white pb-5 text-center text-sm'>
+							全 {todos.length} 件
+						</p>
+					) : (
+						<p className='border-b border-solid border-white pb-5 text-center text-sm'>
+							検索結果：{currentTodos.length} 件 / 全 {todos.length} 件
+						</p>
+					)}
 				</div>
 				<div className='h-6/12 h-screen snap-end overflow-scroll'>
 					<ul className='flex flex-col gap-2 pl-3 pt-28'>
-						{currentTodos
-							? currentTodos.map((todo) => {
+						{currentTodos.length !== 0
+							? currentTodos.map((todo: any) => {
 									return (
 										<li
 											onClick={() => handleSelectTodo(todo)}
@@ -54,7 +67,7 @@ function TodoLists(props: Props) {
 										</li>
 									);
 							  })
-							: todos.map((todo) => {
+							: todos.map((todo: any) => {
 									return (
 										<li
 											onClick={() => handleSelectTodo(todo)}
@@ -66,7 +79,10 @@ function TodoLists(props: Props) {
 											}>
 											<div className='flex'>
 												<input type='checkbox' name='done' />
-												<h2 className='mx-2 text-lg'>{todo.title}</h2>
+												<h2 className='mx-2 text-lg'>
+													{todo.title}
+													{/* TODO:チェックボックスではなく、svg画像でチェックボックスを表現したい */}
+												</h2>
 											</div>
 											<div
 												onClick={handleDeleteModal}

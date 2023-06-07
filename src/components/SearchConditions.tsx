@@ -6,12 +6,12 @@ export default function SearchCondition(props: any) {
 		searchConditions,
 	} = props;
 	return (
-		<aside className='w-3/12 bg-slate-700 p-3 text-slate-600'>
+		<aside className='w-3/12 min-w-[270px] bg-slate-700 p-3 text-slate-600'>
 			<form onSubmit={handleSearchConditionsSubmit}>
 				<h3 className='p-5 text-center text-white'>検索条件</h3>
 				<div>
 					<div className='my-3 rounded bg-slate-200 p-3'>
-						<h4 className='text-sm  font-bold'>キーワード</h4>
+						<h4 className='text-sm  font-bold'>キーワードで検索（複数可）</h4>
 						<div className='flex flex-col'>
 							<input
 								className='m-3 mx-auto w-full rounded-md p-1 pl-3'

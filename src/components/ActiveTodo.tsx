@@ -11,7 +11,7 @@ export default function ActiveTodo(props: Props) {
 	const { isSelectedTodo, handleModalToggle, handleUpdateButton } = props;
 
 	return (
-		<main className='relative flex w-6/12 flex-col gap-10 bg-slate-300 p-10'>
+		<main className='relative flex w-6/12 min-w-[550px] flex-col gap-10 bg-slate-300 p-10'>
 			{isSelectedTodo.id ? (
 				<div className='items-center justify-between'>
 					<div>

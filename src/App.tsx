@@ -93,6 +93,8 @@ function App() {
 			timeLimitStart: "",
 			timeLimitEnd: "",
 		});
+
+		setCurrentTodos([]);
 	};
 
 	/**登録ボタンをクリックした時に発火する関数です。
@@ -143,13 +145,41 @@ function App() {
 	) => {
 		e.preventDefault();
 
+		//入力されたキーワードを整形して配列にする。
+		const shapedKeyWord = searchConditions.keyWord
+			.trim()
+			.replace(/\s+/g, " ")
+			.replace(/\s+/g, " ");
+
+		setSearchConditions((prev) => {
+			return { ...prev, keyWord: shapedKeyWord };
+		});
+
+		const keyWordArray = shapedKeyWord.split(" ");
+		if (keyWordArray.length === 0) {
+			return;
+		}
+		//TODO:配列keyWordArrayが空だったら？
+
+		//キーワードでフィルターをかける
+		function checkAllStringsPresent(strings: string[], targetString: string) {
+			for (let i = 0; i < strings.length; i++) {
+				if (!targetString.includes(strings[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		const newTodos = todos.filter(
 			(todo) =>
-				todo.title.includes(searchConditions.keyWord) === true ||
-				todo.description.includes(searchConditions.keyWord) === true
+				checkAllStringsPresent(keyWordArray, todo.title) ||
+				checkAllStringsPresent(keyWordArray, todo.description)
 		);
 
-		setCurrentTodos(newTodos);
+		if (newTodos.length !== todos.length) {
+			setCurrentTodos(newTodos);
+		}
 	};
 
 	/**登録画面のモーダルウィンドウの表示状態を管理する関数です。
