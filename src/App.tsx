@@ -156,25 +156,26 @@ function App() {
 		});
 
 		const keyWordArray = shapedKeyWord.split(" ");
-		if (keyWordArray.length === 0) {
-			return;
-		}
-		//TODO:配列keyWordArrayが空だったら？
 
 		//キーワードでフィルターをかける
-		function checkAllStringsPresent(strings: string[], targetString: string) {
+		function checkAllStringsPresent(
+			strings: string[],
+			targetString1: string,
+			targetString2: string
+		) {
 			for (let i = 0; i < strings.length; i++) {
-				if (!targetString.includes(strings[i])) {
+				if (
+					!targetString1.includes(strings[i]) &&
+					!targetString2.includes(strings[i])
+				) {
 					return false;
 				}
 			}
 			return true;
 		}
 
-		const newTodos = todos.filter(
-			(todo) =>
-				checkAllStringsPresent(keyWordArray, todo.title) ||
-				checkAllStringsPresent(keyWordArray, todo.description)
+		const newTodos = todos.filter((todo) =>
+			checkAllStringsPresent(keyWordArray, todo.title, todo.description)
 		);
 
 		if (newTodos.length !== todos.length) {
