@@ -146,6 +146,7 @@ function App() {
 		e.preventDefault();
 
 		//入力されたキーワードを整形して配列にする。
+		//(半角空白+全角空白+半角空白の削除ができなかったので、二度かけています)
 		const shapedKeyWord = searchConditions.keyWord
 			.trim()
 			.replace(/\s+/g, " ")
@@ -180,6 +181,8 @@ function App() {
 
 		if (newTodos.length !== todos.length) {
 			setCurrentTodos(newTodos);
+		} else {
+			setCurrentTodos([]);
 		}
 	};
 
