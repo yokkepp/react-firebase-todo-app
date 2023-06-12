@@ -175,12 +175,29 @@ function App() {
 			return true;
 		}
 
+		//キーワード検索の結果をnewTodosに格納する
 		const newTodos = todos.filter((todo) =>
 			checkAllStringsPresent(keyWordArray, todo.title, todo.description)
 		);
 
+		//作成日検索の結果をnewTodos2に格納する
+		const createdAtStart = new Date(searchConditions.createdAtStart);
+		const createdAtEnd = new Date(searchConditions.createdAtEnd);
+
+		const newTodos2 = newTodos.filter((todo) => {
+			const createdAtTodo = new Date(todo.createdAt);
+			if (
+				createdAtStart.getTime() <= createdAtTodo.getTime() &&
+				createdAtEnd.getTime() >= createdAtTodo.getTime()
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+
 		if (newTodos.length !== todos.length) {
-			setCurrentTodos(newTodos);
+			setCurrentTodos(newTodos2);
 		} else {
 			setCurrentTodos([]);
 		}
