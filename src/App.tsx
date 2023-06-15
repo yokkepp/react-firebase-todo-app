@@ -22,7 +22,6 @@ type Todo = {
 	timeLimit: string;
 	createdAt: string;
 	id: string;
-	done: boolean;
 };
 
 type Conditions = {
@@ -42,7 +41,6 @@ function App() {
 		timeLimit: "",
 		createdAt: "",
 		id: "",
-		done: false,
 	});
 	const [formData, setFormData] = useState<Todo>({
 		title: "",
@@ -50,7 +48,6 @@ function App() {
 		timeLimit: "",
 		createdAt: "",
 		id: "",
-		done: false,
 	});
 	const [todos, setTodos] = useState<Todo[]>([]);
 	const [currentTodos, setCurrentTodos] = useState<Todo[]>([]);
@@ -85,6 +82,10 @@ function App() {
 		setSearchConditions((prev) => ({ ...prev, [name]: value }));
 	};
 
+	/**
+	 * 検索条件を初期化する関数です。
+	 * @function
+	 */
 	const handleResetConditions = () => {
 		setSearchConditions({
 			keyWord: "",
@@ -129,7 +130,6 @@ function App() {
 			description: "",
 			timeLimit: "",
 			createdAt: "",
-			done: false,
 			id: "",
 		});
 		handleModalToggle();
@@ -140,10 +140,11 @@ function App() {
 	 * @param e
 	 * @function
 	 */
-	const handleSearchConditionsSubmit = async (
+	const handleSearchConditionsSubmit = (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
 		e.preventDefault();
+		let filteredTodos = [...todos];
 
 		//入力されたキーワードを整形して配列にする。
 		//(半角空白+全角空白+半角空白の削除ができなかったので、二度かけています)
@@ -152,22 +153,30 @@ function App() {
 			.replace(/\s+/g, " ")
 			.replace(/\s+/g, " ");
 
+		//キーワードのinputタグの値の更新
 		setSearchConditions((prev) => {
 			return { ...prev, keyWord: shapedKeyWord };
 		});
 
 		const keyWordArray = shapedKeyWord.split(" ");
 
-		//キーワードでフィルターをかける
+		//1.キーワードでフィルターをかける
+		/**
+		 * keyWordArrayの要素全てが、targetString1または2に含まれているかを返す
+		 * @param keyWordArray 含まれる文字列の配列
+		 * @param targetString1 含まれているか確認する文字列1つ目
+		 * @param targetString2 含まれているか確認する文字列2つ目
+		 * @returns Boolean
+		 */
 		function checkAllStringsPresent(
-			strings: string[],
+			keyWordArray: string[],
 			targetString1: string,
 			targetString2: string
 		) {
-			for (let i = 0; i < strings.length; i++) {
+			for (let i = 0; i < keyWordArray.length; i++) {
 				if (
-					!targetString1.includes(strings[i]) &&
-					!targetString2.includes(strings[i])
+					!targetString1.includes(keyWordArray[i]) &&
+					!targetString2.includes(keyWordArray[i])
 				) {
 					return false;
 				}
@@ -175,32 +184,87 @@ function App() {
 			return true;
 		}
 
-		//キーワード検索の結果をnewTodosに格納する
-		const newTodos = todos.filter((todo) =>
-			checkAllStringsPresent(keyWordArray, todo.title, todo.description)
-		);
-
-		//作成日検索の結果をnewTodos2に格納する
-		const createdAtStart = new Date(searchConditions.createdAtStart);
-		const createdAtEnd = new Date(searchConditions.createdAtEnd);
-
-		const newTodos2 = newTodos.filter((todo) => {
-			const createdAtTodo = new Date(todo.createdAt);
-			if (
-				createdAtStart.getTime() <= createdAtTodo.getTime() &&
-				createdAtEnd.getTime() >= createdAtTodo.getTime()
-			) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-
-		if (newTodos.length !== todos.length) {
-			setCurrentTodos(newTodos2);
-		} else {
-			setCurrentTodos([]);
+		//キーワード検索の結果をに格納する
+		if (searchConditions.keyWord !== "") {
+			filteredTodos = filteredTodos.filter((todo) =>
+				checkAllStringsPresent(keyWordArray, todo.title, todo.description)
+			);
 		}
+
+		//2-1. 作成日でフィルターをかける
+		//作成日の下限
+		if (searchConditions.createdAtStart !== "") {
+			const result = filteredTodos.filter((todo) => {
+				const targetDate = todo.createdAt.slice(0, 10);
+				const createdAtDate = new Date(targetDate).getTime();
+				const createdAtStartDate = new Date(
+					searchConditions.createdAtStart
+				).getTime();
+
+				if (createdAtDate >= createdAtStartDate) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			filteredTodos = result;
+		}
+
+		//作成日の上限
+		if (searchConditions.createdAtEnd !== "") {
+			const result = filteredTodos.filter((todo) => {
+				const targetDate = todo.createdAt.slice(0, 10);
+				const createdAtDate = new Date(targetDate).getTime();
+				const createdAtEndDate = new Date(
+					searchConditions.createdAtEnd
+				).getTime();
+
+				if (createdAtDate <= createdAtEndDate) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			filteredTodos = result;
+		}
+
+		//期限の下限
+		if (searchConditions.timeLimitStart !== "") {
+			const result = filteredTodos.filter((todo) => {
+				const targetDate = todo.timeLimit.slice(0, 10);
+				const timeLimitDate = new Date(targetDate).getTime();
+				const timeLimitStartDate = new Date(
+					searchConditions.timeLimitStart
+				).getTime();
+
+				if (timeLimitDate >= timeLimitStartDate) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			filteredTodos = result;
+		}
+
+		//期限の上限
+		if (searchConditions.timeLimitEnd !== "") {
+			const result = filteredTodos.filter((todo) => {
+				const targetDate = todo.timeLimit.slice(0, 10);
+				const timeLimitDate = new Date(targetDate).getTime();
+				const timeLimitEndDate = new Date(
+					searchConditions.timeLimitEnd
+				).getTime();
+
+				if (timeLimitDate <= timeLimitEndDate) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			filteredTodos = result;
+		}
+
+		setCurrentTodos(filteredTodos);
 	};
 
 	/**登録画面のモーダルウィンドウの表示状態を管理する関数です。
@@ -246,7 +310,6 @@ function App() {
 			timeLimit: "",
 			createdAt: "",
 			id: "",
-			done: false,
 		});
 	};
 
@@ -286,7 +349,6 @@ function App() {
 			description: "",
 			timeLimit: "",
 			createdAt: "",
-			done: false,
 			id: "",
 		});
 		setIsSelectedTodo({ ...formData });
@@ -312,7 +374,6 @@ function App() {
 					description: todoData.data().description,
 					timeLimit: todoData.data().timeLimit,
 					createdAt: todoData.data().createdAt,
-					done: todoData.data().done,
 				})
 			);
 			setTodos(todosArray);

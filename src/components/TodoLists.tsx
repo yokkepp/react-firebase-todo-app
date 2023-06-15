@@ -18,11 +18,6 @@ function TodoLists(props: Props) {
 		currentTodos,
 	} = props;
 
-	useEffect(() => {
-		console.log("currentTodos:", currentTodos);
-		console.log("currentTodos:", currentTodos.length);
-	}, [currentTodos]);
-
 	return (
 		<aside className='w-3/12  min-w-[270px] bg-slate-700'>
 			<div className='flex flex-col text-white'>
@@ -78,7 +73,6 @@ function TodoLists(props: Props) {
 													: "mr-2 flex items-center justify-between rounded-md bg-slate-800 p-5 font-semibold text-slate-400"
 											}>
 											<div className='flex'>
-												<input type='checkbox' name='done' />
 												<h2 className='mx-2 text-lg'>
 													{todo.title}
 													{/* TODO:チェックボックスではなく、svg画像でチェックボックスを表現したい */}
