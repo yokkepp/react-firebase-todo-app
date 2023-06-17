@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { FaTrashAlt, FaCheckCircle, FaCircle } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
+import { Todo } from "../App";
 
 type Props = {
-	todos: any;
-	handleSelectTodo: any;
-	isSelectedTodo: any;
-	handleDeleteModal: any;
-	currentTodos: any;
+	todos: Todo[];
+	handleSelectTodo: React.FC;
+	isSelectedTodo: Todo;
+	handleDeleteModal: React.FC;
+	currentTodos: Todo[];
 };
 
 function TodoLists(props: Props) {
@@ -23,20 +23,16 @@ function TodoLists(props: Props) {
 			<div className='flex flex-col text-white'>
 				<div className='fixed w-3/12 min-w-[270px] bg-slate-700 pt-5'>
 					<h1 className='text-center text-3xl font-bold'>Todo List</h1>
-					{currentTodos.length === 0 ? (
-						<p className='border-b border-solid border-white pb-5 text-center text-sm'>
-							全 {todos.length} 件
-						</p>
-					) : (
-						<p className='border-b border-solid border-white pb-5 text-center text-sm'>
-							検索結果：{currentTodos.length} 件 / 全 {todos.length} 件
-						</p>
-					)}
+					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
+						{currentTodos.length === 0
+							? `全 ${todos.length} 件:検索結果`
+							: `${currentTodos.length} 件 / 全 ${todos.length} 件`}
+					</p>
 				</div>
 				<div className='h-6/12 h-screen snap-end overflow-scroll'>
 					<ul className='flex flex-col gap-2 pl-3 pt-28'>
 						{currentTodos.length !== 0
-							? currentTodos.map((todo: any) => {
+							? currentTodos.map((todo: Todo) => {
 									return (
 										<li
 											onClick={() => handleSelectTodo(todo)}
@@ -62,7 +58,7 @@ function TodoLists(props: Props) {
 										</li>
 									);
 							  })
-							: todos.map((todo: any) => {
+							: todos.map((todo: Todo) => {
 									return (
 										<li
 											onClick={() => handleSelectTodo(todo)}

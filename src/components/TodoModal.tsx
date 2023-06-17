@@ -1,14 +1,13 @@
 import { IoMdTimer, IoIosCreate } from "react-icons/io";
-import { GiProgression } from "react-icons/gi";
 
 type Props = {
 	isModalOpen: boolean;
-	handleRegisterSubmit: any;
-	handleChange: any;
+	handleRegisterSubmit: React.FC;
+	handleChange: React.FC;
 	formData: any;
 	inputEl: any;
 	isEditing: boolean;
-	handleUpdateSubmit: any;
+	handleUpdateSubmit: React.FC;
 	isSelectedTodo: any;
 };
 
@@ -21,7 +20,6 @@ export default function TodoModal(props: Props) {
 		inputEl,
 		isEditing,
 		handleUpdateSubmit,
-		isSelectedTodo,
 	} = props;
 	return (
 		<div

@@ -1,4 +1,13 @@
-export default function SearchCondition(props: any) {
+import { Conditions } from "../App";
+
+type Props = {
+	handleChangeSearchConditions: React.FC;
+	handleSearchConditionsSubmit: React.FC;
+	handleResetConditions: React.FC;
+	searchConditions: Conditions;
+};
+
+export default function SearchCondition(props: Props) {
 	const {
 		handleChangeSearchConditions,
 		handleSearchConditionsSubmit,

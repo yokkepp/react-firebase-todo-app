@@ -1,10 +1,11 @@
 import { FaPen } from "react-icons/fa";
 import { IoMdTimer, IoIosCreate } from "react-icons/io";
+import { Todo } from "../App";
 
 type Props = {
-	isSelectedTodo: any;
-	handleModalToggle: any;
-	handleUpdateButton: any;
+	isSelectedTodo: Todo;
+	handleModalToggle: React.FC;
+	handleUpdateButton: React.FC;
 };
 
 export default function ActiveTodo(props: Props) {

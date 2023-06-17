@@ -6,7 +6,6 @@ import DeleteConfirmation from "./components/DeleteConfirmation";
 import SearchConditions from "./components/SearchConditions";
 import {
 	doc,
-	setDoc,
 	collection,
 	getDocs,
 	addDoc,
@@ -16,7 +15,7 @@ import {
 import db from "./firebase";
 //TODO:エラーなくimportができるように修正する。
 
-type Todo = {
+export type Todo = {
 	title: string;
 	description: string;
 	timeLimit: string;
@@ -24,7 +23,7 @@ type Todo = {
 	id: string;
 };
 
-type Conditions = {
+export type Conditions = {
 	keyWord: string;
 	createdAtStart: string;
 	createdAtEnd: string;
