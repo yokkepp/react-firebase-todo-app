@@ -359,9 +359,6 @@ function App() {
 
 		// フィルター後のTodoを更新
 		setCurrentTodos(filteredTodo);
-
-		//TODO フィルター結果が0件のとき、0件ではなく全件表示になってしまう。
-		// <TodoLists />の中身を修正すれば直ると思います。
 	};
 
 	/**選択されたTodoのIDを管理します。
