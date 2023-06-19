@@ -13,7 +13,6 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import db from "./firebase";
-//TODO:エラーなくimportができるように修正する。
 
 export type Todo = {
 	title: string;
@@ -49,9 +48,8 @@ function App() {
 		id: "",
 	});
 	const [todos, setTodos] = useState<Todo[]>([]);
-	const [currentTodos, setCurrentTodos] = useState<Todo[]>([]);
+	const [currentTodos, setCurrentTodos] = useState<Todo[]>(todos);
 	const [isEditing, setIsEditing] = useState(false);
-	const [isDeleteAccept, setIsAccept] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [searchConditions, setSearchConditions] = useState<Conditions>({
 		keyWord: "",
@@ -94,7 +92,17 @@ function App() {
 			timeLimitEnd: "",
 		});
 
-		setCurrentTodos([]);
+		setCurrentTodos(todos);
+	};
+	/**登録画面のモーダルウィンドウの表示状態を管理する関数です。
+	 *@function
+	 */
+	const handleModalToggle = () => {
+		if (isModalOpen) {
+			setIsOpenModal(false);
+		} else {
+			setIsOpenModal(true);
+		}
 	};
 
 	/**登録ボタンをクリックした時に発火する関数です。
@@ -142,139 +150,218 @@ function App() {
 	const handleSearchConditionsSubmit = (
 		e: React.FormEvent<HTMLFormElement>
 	) => {
+		// フォームの処理を制御
 		e.preventDefault();
-		let filteredTodos = [...todos];
 
-		//入力されたキーワードを整形して配列にする。
-		//(半角空白+全角空白+半角空白の削除ができなかったので、二度かけています)
-		const shapedKeyWord = searchConditions.keyWord
-			.trim()
-			.replace(/\s+/g, " ")
-			.replace(/\s+/g, " ");
+		/***************************************
+		  ここからフィルター処理をする前の準備
+		 ****************************************/
 
-		//キーワードのinputタグの値の更新
-		setSearchConditions((prev) => {
-			return { ...prev, keyWord: shapedKeyWord };
-		});
+		// フィルターをかけるかどうかのフラグを定義
+		let keywordFilterFlg = true;
+		let createdAtFlg = true;
+		let timeLimitFlg = true;
 
-		const keyWordArray = shapedKeyWord.split(" ");
+		// キーワードが空欄だったらフラグをfalseにし、フィルターをかけない
+		if (!searchConditions.keyWord.trim()) {
+			keywordFilterFlg = false;
+		}
 
-		//1.キーワードでフィルターをかける
-		/**
-		 * keyWordArrayの要素全てが、targetString1または2に含まれているかを返す
-		 * @param keyWordArray 含まれる文字列の配列
-		 * @param targetString1 含まれているか確認する文字列1つ目
-		 * @param targetString2 含まれているか確認する文字列2つ目
-		 * @returns Boolean
-		 */
-		function checkAllStringsPresent(
-			keyWordArray: string[],
-			targetString1: string,
-			targetString2: string
+		console.log(searchConditions);
+
+		// 作成日が空欄だったらフラグをfalseにし、フィルターをかけない
+		if (
+			!searchConditions.createdAtStart.trim() &&
+			!searchConditions.createdAtEnd.trim()
 		) {
-			for (let i = 0; i < keyWordArray.length; i++) {
-				if (
-					!targetString1.includes(keyWordArray[i]) &&
-					!targetString2.includes(keyWordArray[i])
-				) {
-					return false;
-				}
+			createdAtFlg = false;
+		}
+
+		// 期限が空欄だったらフラグをfalseにし、フィルターをかけない
+		if (
+			!searchConditions.timeLimitStart.trim() &&
+			!searchConditions.timeLimitEnd.trim()
+		) {
+			timeLimitFlg = false;
+		}
+
+		// 1. キーワードフィルターの処理
+		const keywordFilter = (filteredTodo: Todo[]) => {
+			// 入力したキーワードの半角・全角空白を削除し、配列にする
+			const shapedKeyWord = searchConditions.keyWord.trim().split(/\s+/);
+
+			// フィルターをかける回数(キーワードの配列分)
+			const filterCount = shapedKeyWord.length;
+
+			// キーワードの配列分、フィルターをかける
+			for (let i = 0; i < filterCount; i++) {
+				// フィルターをかけたものを上書きで格納
+				filteredTodo = filterBeforeTodo.filter((todo: Todo) =>
+					todo.title.includes(shapedKeyWord[i])
+				);
 			}
-			return true;
-		}
 
-		//キーワード検索の結果をに格納する
-		if (searchConditions.keyWord !== "") {
-			filteredTodos = filteredTodos.filter((todo) =>
-				checkAllStringsPresent(keyWordArray, todo.title, todo.description)
-			);
-		}
+			// フィルター後のTodoを返す
+			return filteredTodo;
+		};
 
-		//2-1. 作成日でフィルターをかける
-		//作成日の下限
-		if (searchConditions.createdAtStart !== "") {
-			const result = filteredTodos.filter((todo) => {
-				const targetDate = todo.createdAt.slice(0, 10);
-				const createdAtDate = new Date(targetDate).getTime();
-				const createdAtStartDate = new Date(
+		// 2. 作成日フィルターの処理
+		const createdAtFilter = (filterBeforeTodo: Todo[]) => {
+			//作成日フィルターの下準備開始
+			let createdAtStartNumber = 0;
+			if (searchConditions.createdAtStart.trim() !== "") {
+				createdAtStartNumber = new Date(
 					searchConditions.createdAtStart
 				).getTime();
+			}
 
-				if (createdAtDate >= createdAtStartDate) {
-					return true;
-				} else {
-					return false;
+			let createdAtEndNumber = 0;
+			if (searchConditions.createdAtEnd.trim() !== "") {
+				createdAtEndNumber = new Date(searchConditions.createdAtEnd).getTime();
+			}
+
+			//作成日フィルターの
+			filteredTodo = filterBeforeTodo.filter((todo) => {
+				const createAtTodo: string = todo.createdAt.slice(0, 10);
+				const createdAtTodoNumber = new Date(createAtTodo).getTime();
+				console.log({ createAtTodo });
+				console.log({ createdAtStartNumber });
+				console.log({ createdAtTodoNumber });
+				console.log({ createdAtEndNumber });
+				//作成日開始も作成日終了も入力値がある場合
+				if (
+					searchConditions.createdAtStart !== "" &&
+					searchConditions.createdAtEnd !== ""
+				) {
+					if (
+						createdAtTodoNumber >= createdAtStartNumber &&
+						createdAtTodoNumber <= createdAtEndNumber
+					) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+				//作成日開始のみ入力値がある場合
+				if (
+					searchConditions.createdAtStart !== "" &&
+					searchConditions.createdAtEnd === ""
+				) {
+					if (createdAtStartNumber <= createdAtTodoNumber) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+				//作成日終了のみ入力値がある場合
+				if (
+					searchConditions.createdAtStart === "" &&
+					searchConditions.createdAtEnd !== ""
+				) {
+					if (createdAtEndNumber >= createdAtTodoNumber) {
+						return true;
+					} else {
+						return false;
+					}
 				}
 			});
-			filteredTodos = result;
-		}
+			return filteredTodo;
+		};
 
-		//作成日の上限
-		if (searchConditions.createdAtEnd !== "") {
-			const result = filteredTodos.filter((todo) => {
-				const targetDate = todo.createdAt.slice(0, 10);
-				const createdAtDate = new Date(targetDate).getTime();
-				const createdAtEndDate = new Date(
-					searchConditions.createdAtEnd
-				).getTime();
-
-				if (createdAtDate <= createdAtEndDate) {
-					return true;
-				} else {
-					return false;
-				}
-			});
-			filteredTodos = result;
-		}
-
-		//期限の下限
-		if (searchConditions.timeLimitStart !== "") {
-			const result = filteredTodos.filter((todo) => {
-				const targetDate = todo.timeLimit.slice(0, 10);
-				const timeLimitDate = new Date(targetDate).getTime();
-				const timeLimitStartDate = new Date(
+		// 3. 期限フィルターの処理
+		function timeLimitFilter(filterBeforeTodo: Todo[]) {
+			//作成日フィルターの下準備開始
+			let timeLimitStartNumber = 0;
+			if (searchConditions.timeLimitStart.trim() !== "") {
+				timeLimitStartNumber = new Date(
 					searchConditions.timeLimitStart
 				).getTime();
+			}
 
-				if (timeLimitDate >= timeLimitStartDate) {
-					return true;
-				} else {
-					return false;
+			let timeLimitEndNumber = 0;
+			if (searchConditions.timeLimitEnd.trim() !== "") {
+				timeLimitEndNumber = new Date(searchConditions.timeLimitEnd).getTime();
+			}
+
+			//作成日フィルターの
+			filteredTodo = filterBeforeTodo.filter((todo) => {
+				const timeLimitTodo: string = todo.timeLimit.slice(0, 10);
+				const timeLimitTodoNumber = new Date(timeLimitTodo).getTime();
+
+				//作成日開始も作成日終了も入力値がある場合
+				if (
+					searchConditions.timeLimitStart !== "" &&
+					searchConditions.timeLimitEnd !== ""
+				) {
+					if (
+						timeLimitTodoNumber >= timeLimitStartNumber &&
+						timeLimitTodoNumber <= timeLimitEndNumber
+					) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+				//作成日開始のみ入力値がある場合
+				if (
+					searchConditions.timeLimitStart !== "" &&
+					searchConditions.timeLimitEnd === ""
+				) {
+					if (timeLimitStartNumber <= timeLimitTodoNumber) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+
+				//作成日終了のみ入力値がある場合
+				if (
+					searchConditions.timeLimitStart === "" &&
+					searchConditions.timeLimitEnd !== ""
+				) {
+					if (timeLimitEndNumber >= timeLimitTodoNumber) {
+						return true;
+					} else {
+						return false;
+					}
 				}
 			});
-			filteredTodos = result;
+			return filteredTodo;
 		}
 
-		//期限の上限
-		if (searchConditions.timeLimitEnd !== "") {
-			const result = filteredTodos.filter((todo) => {
-				const targetDate = todo.timeLimit.slice(0, 10);
-				const timeLimitDate = new Date(targetDate).getTime();
-				const timeLimitEndDate = new Date(
-					searchConditions.timeLimitEnd
-				).getTime();
+		/**********************************
+		  ここからフィルター処理スタート
+		 **********************************/
 
-				if (timeLimitDate <= timeLimitEndDate) {
-					return true;
-				} else {
-					return false;
-				}
-			});
-			filteredTodos = result;
+		// 現在のTodoList(全件)
+		const filterBeforeTodo = [...todos];
+
+		// キーワードフィルター対象のTodo
+		let filteredTodo = filterBeforeTodo;
+
+		// keywordFilterFlgが立っている場合のみキーワードフィルターをかける
+		if (keywordFilterFlg) {
+			filteredTodo = keywordFilter(filteredTodo);
 		}
 
-		setCurrentTodos(filteredTodos);
-	};
-
-	/**登録画面のモーダルウィンドウの表示状態を管理する関数です。
-	 *@function
-	 */
-	const handleModalToggle = () => {
-		if (isModalOpen) {
-			setIsOpenModal(false);
-		} else {
-			setIsOpenModal(true);
+		// createdAtFlgが立っている場合のみ作成日フィルターをかける
+		if (createdAtFlg) {
+			filteredTodo = createdAtFilter(filteredTodo);
 		}
+
+		// timeLimitFlgが立っている場合のみ期限フィルターをかける
+		if (timeLimitFlg) {
+			filteredTodo = timeLimitFilter(filteredTodo);
+		}
+
+		// フィルター後のTodoを更新
+		setCurrentTodos(filteredTodo);
+
+		//TODO フィルター結果が0件のとき、0件ではなく全件表示になってしまう。
+		// <TodoLists />の中身を修正すれば直ると思います。
 	};
 
 	/**選択されたTodoのIDを管理します。
@@ -295,8 +382,12 @@ function App() {
 
 	const doDelete = () => {
 		const newTodos = todos.filter((todo) => isSelectedTodo.id !== todo.id);
+		const currentNewTodos = currentTodos.filter(
+			(todo) => isSelectedTodo.id !== todo.id
+		);
 
 		setTodos(newTodos);
+		setCurrentTodos(currentNewTodos);
 		setIsDeleteModalOpen(false);
 
 		//firebaseのtodo削除
@@ -328,7 +419,7 @@ function App() {
 	 * @function
 	 * @param targetTodo 更新対象となるtodoです。
 	 */
-	const handleUpdateSubmit = (e: any) => {
+	const handleUpdateSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 		const newTodos = todos.map((todo) => {
 			if (isSelectedTodo.id === todo.id) {

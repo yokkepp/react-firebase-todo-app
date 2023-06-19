@@ -1,14 +1,15 @@
 import { IoMdTimer, IoIosCreate } from "react-icons/io";
+import { Todo } from "../App";
 
 type Props = {
 	isModalOpen: boolean;
-	handleRegisterSubmit: React.FC;
-	handleChange: React.FC;
-	formData: any;
-	inputEl: any;
+	handleRegisterSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	formData: Todo;
+	inputEl: React.RefObject<HTMLInputElement>;
 	isEditing: boolean;
 	handleUpdateSubmit: React.FC;
-	isSelectedTodo: any;
+	isSelectedTodo: Todo;
 };
 
 export default function TodoModal(props: Props) {

@@ -60,6 +60,7 @@ export default function ActiveTodo(props: Props) {
 			<p className='block h-full overflow-scroll whitespace-pre-wrap rounded-lg bg-slate-200 p-3'>
 				{isSelectedTodo.description}
 			</p>
+
 			<button
 				className=' absolute bottom-10 right-10 h-16 w-16 rounded-full bg-green-600 text-4xl text-white shadow-md hover:bg-green-500'
 				onClick={handleModalToggle}>
