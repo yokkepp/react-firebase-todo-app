@@ -1,9 +1,11 @@
 import { Conditions } from "../App";
 
 type Props = {
-	handleChangeSearchConditions: React.FC;
-	handleSearchConditionsSubmit: React.FC;
-	handleResetConditions: React.FC;
+	handleChangeSearchConditions: (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => void;
+	handleSearchConditionsSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+	handleResetConditions: () => void;
 	searchConditions: Conditions;
 };
 

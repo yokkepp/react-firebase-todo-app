@@ -128,7 +128,7 @@ function App() {
 			createdAt: createdAt,
 		});
 
-		//ローカルのStateを変更する
+		//todosを変更する
 		setTodos([...todos, { ...formData, id: docRef.id, createdAt: createdAt }]);
 
 		//フォームの初期化
@@ -427,6 +427,7 @@ function App() {
 			}
 		});
 		setTodos(newTodos);
+		setCurrentTodos(newTodos);
 
 		//firebaseの更新
 
@@ -464,6 +465,7 @@ function App() {
 				})
 			);
 			setTodos(todosArray);
+			setCurrentTodos(todosArray);
 		});
 	}, []);
 

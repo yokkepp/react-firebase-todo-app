@@ -3,9 +3,9 @@ import { Todo } from "../App";
 
 type Props = {
 	todos: Todo[];
-	handleSelectTodo: React.FC;
+	handleSelectTodo: (todo: Todo) => void;
 	isSelectedTodo: Todo;
-	handleDeleteModal: React.FC;
+	handleDeleteModal: () => void;
 	currentTodos: Todo[];
 };
 
@@ -22,7 +22,7 @@ function TodoLists(props: Props) {
 		<aside className='w-3/12  min-w-[270px] bg-slate-700'>
 			<div className='flex flex-col text-white'>
 				<div className='fixed w-3/12 min-w-[270px] bg-slate-700 pt-5'>
-					<h1 className='text-center text-3xl font-bold'>Todo List</h1>
+					<h1 className='text-center text-3xl font-bold'>My Note</h1>
 					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
 						{currentTodos.length === 0
 							? `該当なし / 全 ${todos.length} 件`
@@ -42,7 +42,6 @@ function TodoLists(props: Props) {
 											: "mr-2 flex items-center justify-between rounded-md bg-slate-800 p-5 font-semibold text-slate-400"
 									}>
 									<div className='flex'>
-										<input type='checkbox' name='done' />
 										<h2 className='mx-2 text-lg'>{todo.title}</h2>
 									</div>
 									<div

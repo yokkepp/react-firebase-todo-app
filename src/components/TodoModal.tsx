@@ -4,11 +4,13 @@ import { Todo } from "../App";
 type Props = {
 	isModalOpen: boolean;
 	handleRegisterSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
-	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	handleChange: (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => void;
 	formData: Todo;
 	inputEl: React.RefObject<HTMLInputElement>;
 	isEditing: boolean;
-	handleUpdateSubmit: React.FC;
+	handleUpdateSubmit: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	isSelectedTodo: Todo;
 };
 
@@ -74,7 +76,7 @@ export default function TodoModal(props: Props) {
 					onChange={handleChange}></textarea>
 
 				{isEditing ? (
-					<button className='w-auto rounded bg-slate-500 px-12 py-4 text-white shadow-lg hover:bg-slate-400'>
+					<button className='disabled: w-auto rounded bg-slate-500 px-12 py-4 text-white shadow-lg hover:bg-slate-400 '>
 						更新
 					</button>
 				) : (
