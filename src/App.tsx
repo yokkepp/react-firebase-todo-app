@@ -470,7 +470,6 @@ function App() {
 			);
 			setTodos(todosArray);
 			setCurrentTodos(todosArray);
-			handleSearchConditionsSubmit;
 		});
 	}, []);
 

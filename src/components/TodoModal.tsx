@@ -2,7 +2,7 @@ import { IoMdTimer, IoIosCreate } from "react-icons/io";
 import { Todo } from "../App";
 
 type Props = {
-	handleModalToggle: any;
+	handleModalToggle: React.MouseEventHandler<HTMLDivElement> | undefined;
 	isModalOpen: boolean;
 	handleRegisterSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 	handleChange: (
