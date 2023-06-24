@@ -132,7 +132,7 @@ function App() {
 		});
 
 		//todosを変更する
-		setTodos([...todos, { ...formData, id: docRef.id, createdAt: createdAt }]);
+		setTodos([{ ...formData, id: docRef.id, createdAt: createdAt }, ...todos]);
 
 		//フォームの初期化
 		setFormData({
@@ -468,8 +468,20 @@ function App() {
 					createdAt: todoData.data().createdAt,
 				})
 			);
-			setTodos(todosArray);
-			setCurrentTodos(todosArray);
+			const sortedTodosArray = todosArray.sort((a, b) => {
+				const aDate = new Date(a.createdAt).getTime();
+				const bDate = new Date(b.createdAt).getTime();
+				if (aDate < bDate) {
+					return 1;
+				}
+				if (aDate > bDate) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
+			setTodos(sortedTodosArray);
+			setCurrentTodos(sortedTodosArray);
 		});
 	}, []);
 
