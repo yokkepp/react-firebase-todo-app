@@ -63,7 +63,9 @@ function App() {
 	 *@function
 	 * @param e イベントです。
 	 */
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
@@ -111,6 +113,7 @@ function App() {
 	 */
 	const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		if (!formData.title.trim()) return alert("タイトルが空欄です。");
 
 		//作成日を生成する
 		const now = new Date();
@@ -416,8 +419,9 @@ function App() {
 	 * @function
 	 * @param targetTodo 更新対象となるtodoです。
 	 */
-	const handleUpdateSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleUpdateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		if (!formData.title.trim()) return alert("タイトルが空欄です。");
 		const newTodos = todos.map((todo) => {
 			if (isSelectedTodo.id === todo.id) {
 				updateDoc(doc(db, "todos", todo.id), formData);
@@ -466,12 +470,14 @@ function App() {
 			);
 			setTodos(todosArray);
 			setCurrentTodos(todosArray);
+			handleSearchConditionsSubmit;
 		});
 	}, []);
 
 	return (
 		<>
 			<TodoModal
+				handleModalToggle={handleModalToggle}
 				isModalOpen={isModalOpen}
 				handleRegisterSubmit={handleRegisterSubmit}
 				handleChange={handleChange}
