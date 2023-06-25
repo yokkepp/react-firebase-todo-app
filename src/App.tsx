@@ -32,7 +32,7 @@ export type Conditions = {
 
 function App() {
 	const inputEl = useRef<HTMLInputElement>(null);
-	const [isModalOpen, setIsOpenModal] = useState<boolean>(false);
+	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [isSelectedTodo, setIsSelectedTodo] = useState<Todo>({
 		title: "",
 		description: "",
@@ -101,10 +101,22 @@ function App() {
 	 */
 	const handleModalToggle = () => {
 		if (isModalOpen) {
-			setIsOpenModal(false);
+			setIsModalOpen(false);
 		} else {
-			setIsOpenModal(true);
+			setFormData({
+				title: "",
+				description: "",
+				timeLimit: "",
+				createdAt: "",
+				id: "",
+			});
+			setIsModalOpen(true);
 		}
+	};
+
+	const modalCancel = () => {
+		setIsEditing(false);
+		setIsModalOpen(false);
 	};
 
 	/**登録ボタンをクリックした時に発火する関数です。
@@ -488,7 +500,6 @@ function App() {
 	return (
 		<>
 			<TodoModal
-				handleModalToggle={handleModalToggle}
 				isModalOpen={isModalOpen}
 				handleRegisterSubmit={handleRegisterSubmit}
 				handleChange={handleChange}
@@ -497,6 +508,7 @@ function App() {
 				isEditing={isEditing}
 				handleUpdateSubmit={handleUpdateSubmit}
 				isSelectedTodo={isSelectedTodo}
+				modalCancel={modalCancel}
 			/>
 			<DeleteConfirmation
 				isDeleteModalOpen={isDeleteModalOpen}

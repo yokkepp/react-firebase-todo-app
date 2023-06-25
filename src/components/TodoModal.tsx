@@ -2,7 +2,6 @@ import { IoMdTimer, IoIosCreate } from "react-icons/io";
 import { Todo } from "../App";
 
 type Props = {
-	handleModalToggle: React.MouseEventHandler<HTMLDivElement> | undefined;
 	isModalOpen: boolean;
 	handleRegisterSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 	handleChange: (
@@ -13,11 +12,11 @@ type Props = {
 	isEditing: boolean;
 	handleUpdateSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 	isSelectedTodo: Todo;
+	modalCancel: React.MouseEventHandler<HTMLDivElement>;
 };
 
 export default function TodoModal(props: Props) {
 	const {
-		handleModalToggle,
 		isModalOpen,
 		handleRegisterSubmit,
 		handleChange,
@@ -25,10 +24,11 @@ export default function TodoModal(props: Props) {
 		inputEl,
 		isEditing,
 		handleUpdateSubmit,
+		modalCancel,
 	} = props;
 	return (
 		<div
-			onClick={handleModalToggle}
+			onClick={modalCancel}
 			className={
 				isModalOpen
 					? "fixed z-50 flex h-screen w-full animate-fade-in items-center justify-center bg-black bg-opacity-60 transition-all"
@@ -36,8 +36,8 @@ export default function TodoModal(props: Props) {
 			}>
 			<form
 				className=' container relative flex h-3/4 w-3/4 flex-col gap-5 rounded-2xl bg-slate-200 p-12 shadow-lg'
-				onSubmit={isEditing ? handleUpdateSubmit : handleRegisterSubmit}
-				onClick={(e) => e.stopPropagation()}>
+				onClick={(e) => e.stopPropagation()}
+				onSubmit={isEditing ? handleUpdateSubmit : handleRegisterSubmit}>
 				<input
 					type='text'
 					name='title'

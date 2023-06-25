@@ -32,6 +32,9 @@ function TodoLists(props: Props) {
 				<div className='h-6/12 h-screen snap-end overflow-scroll'>
 					<ul className='flex flex-col gap-2 pl-3 pt-28'>
 						{currentTodos.map((todo: Todo) => {
+							const createdAtDate = new Date(
+								todo.createdAt
+							).toLocaleDateString();
 							return (
 								<li
 									onClick={() => handleSelectTodo(todo)}
@@ -41,8 +44,9 @@ function TodoLists(props: Props) {
 											? "flex items-center justify-between rounded-l-md bg-slate-300 p-5 font-semibold text-slate-700"
 											: "mr-2 flex items-center justify-between rounded-md bg-slate-800 p-5 font-semibold text-slate-400"
 									}>
-									<div className='flex'>
+									<div>
 										<h2 className='mx-2 text-lg'>{todo.title}</h2>
+										<sub className='mx-2 text-xs'>作成日：{createdAtDate}</sub>
 									</div>
 									<div
 										onClick={handleDeleteModal}
