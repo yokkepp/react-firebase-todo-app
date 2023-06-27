@@ -1,4 +1,10 @@
-export default function DeleteConfirmation(props: any) {
+type Props = {
+	isDeleteModalOpen: boolean;
+	doDelete: () => void;
+	handleDeleteModal: () => void;
+};
+
+export default function DeleteConfirmation(props: Props) {
 	const { isDeleteModalOpen, doDelete, handleDeleteModal } = props;
 
 	return (
