@@ -445,8 +445,6 @@ function App() {
 		setTodos(newTodos);
 		setCurrentTodos(newTodos);
 
-		//firebaseの更新
-
 		//フォームの初期化
 		setFormData({
 			title: "",

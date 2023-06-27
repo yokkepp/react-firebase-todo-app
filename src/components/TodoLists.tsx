@@ -1,5 +1,6 @@
 import { FaTrashAlt } from "react-icons/fa";
 import { Todo } from "../App";
+import SearchCondition from "./SearchConditions";
 
 type Props = {
 	todos: Todo[];
@@ -21,7 +22,7 @@ function TodoLists(props: Props) {
 	return (
 		<aside className='w-3/12  min-w-[270px] bg-slate-700'>
 			<div className='flex flex-col text-white'>
-				<div className='fixed w-3/12 min-w-[270px] bg-slate-700 pt-5'>
+				<div className='fixed z-10 w-3/12 min-w-[270px] bg-slate-700 pt-5'>
 					<h1 className='text-center text-3xl font-bold'>My Note</h1>
 					<p className='border-b border-solid border-white pb-5 text-center text-sm'>
 						{currentTodos.length === 0
