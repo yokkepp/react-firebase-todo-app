@@ -1,6 +1,5 @@
 import { FaTrashAlt } from "react-icons/fa";
 import { Todo } from "../App";
-import SearchCondition from "./SearchConditions";
 
 type Props = {
 	todos: Todo[];
