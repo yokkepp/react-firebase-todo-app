@@ -6,3 +6,6 @@
 - React
 - TypeScript
 - Tailwind
+- Firebase
+
+##
